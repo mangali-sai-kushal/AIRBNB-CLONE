@@ -1,4 +1,6 @@
 const Listing=require('../models/listing.js');
+const mongoose = require("mongoose");
+const ExpressError = require("../utils/ExpressError.js");
 
 
 module.exports.index=async(req,res)=>{
@@ -15,6 +17,10 @@ module.exports.renderNewForm=(req,res)=>{
 }
 module.exports.showListing=async (req,res)=>{
   let {id}=req.params;
+
+if (!mongoose.Types.ObjectId.isValid(req.params.id)) {
+  throw new ExpressError(404, "Listing not found");
+}
   const listing=await Listing.findById(id).populate({path:'reviews',populate:{ path:'author'}}).populate("owner");
   if(!listing){
     req.flash("error","cannot find that listing");

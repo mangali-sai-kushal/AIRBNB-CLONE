@@ -8,8 +8,8 @@ const ejs = require('ejs');
 const methodOverride = require('method-override');
 const ejsMate = require('ejs-mate');
 const path = require('path');
-const session = require('express-session');
-const MongoStore = require('connect-mongo');
+const session = require("express-session");
+const MongoStore = require("connect-mongo");
 const flash = require('connect-flash');
 const passport = require('passport');
 const LocalStrategy = require('passport-local');
@@ -38,31 +38,29 @@ async function main() {
   return connect;
 }
 
+
 // const store = MongoStore.create({
-//   mongoUrl: dbURL,
-//   touchAfter: 24 * 60 * 60,
+//   mongoUrl: process.env.MONGO_URL, // Atlas URL
 //   crypto: {
-//     secret:"mysupersecretcode",
-//   }
+//     secret: "mysupersecretcode"
+//   },
+//   touchAfter: 24 * 3600
 // });
 
-// store.on("error", function(e) {
-//   console.log("Session store error", e);
-// });
-
-const sessionOptions = {
-  
-  secret: process.env.SECRET,
-  resave: false,
-  saveUninitialized: false,
-  cookie: {
-    httpOnly: true,
-    expires: Date.now() + 1000*60*60*24*7,
-    maxAge: 1000*60*60*24*7
-  }
-};
-
-app.use(session(sessionOptions));
+app.use(
+  session({
+    // store,
+    secret: "mysupersecretcode",
+    resave: false,
+    saveUninitialized: false,
+    cookie: {
+      expires: Date.now() + 7 * 24 * 60 * 60 * 1000,
+      maxAge: 7 * 24 * 60 * 60 * 1000,
+      httpOnly: true
+    }
+  })
+);
+// app.use(session(sessionOptions));
 app.use(flash());
 app.use(passport.initialize());
 app.use(passport.session());
